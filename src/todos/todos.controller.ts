@@ -21,7 +21,7 @@ export class TodosController {
   }
 
   @Delete()
-  deleteTodo(@Body('id') id: string): string {
+  deleteTodo(@Body('id') id: number): string {
     return `This action deletes a todo with id ${id}`;
   }
 }

@@ -28,9 +28,12 @@ export class TodosController {
     return this.todosService.create(createTodoDto);
   }
 
-  @Put()
-  updateTodo(@Body() updateTodoDto: UpdateTodoDto): string {
-    return 'This action updates a todo';
+  @Put(':id')
+  updateTodo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTodoDto: UpdateTodoDto,
+  ): Promise<Todo> {
+    return this.todosService.update(id, updateTodoDto);
   }
 
   @Delete(':id')

@@ -19,7 +19,6 @@ export class TodosController {
 
   @Get()
   getTodos(): Promise<Todo[]> {
-    // return 'This action returns all todos';
     return this.todosService.findAll();
   }
 

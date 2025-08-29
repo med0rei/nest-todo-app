@@ -23,6 +23,11 @@ export class TodosController {
     return this.todosService.findAll();
   }
 
+  @Get(':id')
+  getTodo(@Param('id', ParseIntPipe) id: number): Promise<Todo | null> {
+    return this.todosService.findOne(id);
+  }
+
   @Post()
   createTodo(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
     return this.todosService.create(createTodoDto);

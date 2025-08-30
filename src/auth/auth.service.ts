@@ -36,4 +36,18 @@ export class AuthService {
       throw new UnauthorizedException();
     }
   }
+
+  async signUp(
+    username: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.usersService.create({
+      username,
+      password,
+    });
+    const payload = { sub: user.id, username: user.username };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
 }

@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
 import * as argon2 from 'argon2';
+import { UsersService } from '../users/users.service';
+import { UserDto } from '../users/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -10,44 +11,34 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(
+  async validateUser(
     username: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<UserDto | null> {
     const user = await this.usersService.findOne(username);
 
     if (!user) {
-      throw new UnauthorizedException();
+      return null;
     }
 
     try {
       if (await argon2.verify(user.password_hash, password)) {
         // password matched
-        const payload = { sub: user.id, username: user.username };
-        return {
-          access_token: await this.jwtService.signAsync(payload),
-        };
+        return { userId: user.id, username: user.username };
       } else {
         // password did not match
-        throw new UnauthorizedException();
+        return null;
       }
     } catch (err) {
       // internal failure
-      throw new UnauthorizedException();
+      return null;
     }
   }
 
-  async signUp(
-    username: string,
-    password: string,
-  ): Promise<{ access_token: string }> {
-    const user = await this.usersService.create({
-      username,
-      password,
-    });
-    const payload = { sub: user.id, username: user.username };
+  async login(user: UserDto): Promise<{ access_token: string }> {
+    const payload = { username: user.username, sub: user.userId };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: this.jwtService.sign(payload),
     };
   }
 }

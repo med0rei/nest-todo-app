@@ -1,4 +1,11 @@
 {
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

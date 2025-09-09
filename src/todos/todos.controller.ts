@@ -6,10 +6,22 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UsePipes,
 } from '@nestjs/common';
 import { Body } from '@nestjs/common/decorators/http/route-params.decorator';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { UpdateTodoDto } from './dto/update-todo.dto';
+import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
+import type {
+  CreateTodoDto,
+  DeleteTodoDto,
+  GetTodoDto,
+  UpdateTodoDto,
+} from './schemas/todo.schema';
+import {
+  createTodoSchema,
+  deleteTodoSchema,
+  getTodoSchema,
+  updateTodoSchema,
+} from './schemas/todo.schema';
 import { Todo } from './todo.entity';
 import { TodosService } from './todos.service';
 
@@ -23,11 +35,13 @@ export class TodosController {
   }
 
   @Get(':id')
-  getTodo(@Param('id', ParseIntPipe) id: number): Promise<Todo | null> {
-    return this.todosService.findOne(id);
+  @UsePipes(new ZodValidationPipe(getTodoSchema))
+  getTodo(@Param() getTodoDto: GetTodoDto): Promise<Todo | null> {
+    return this.todosService.findOne(getTodoDto.id);
   }
 
   @Post()
+  @UsePipes(new ZodValidationPipe(createTodoSchema))
   createTodo(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
     return this.todosService.create(createTodoDto);
   }
@@ -35,13 +49,14 @@ export class TodosController {
   @Put(':id')
   updateTodo(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateTodoDto: UpdateTodoDto,
+    @Body(new ZodValidationPipe(updateTodoSchema)) updateTodoDto: UpdateTodoDto,
   ): Promise<Todo> {
     return this.todosService.update(id, updateTodoDto);
   }
 
   @Delete(':id')
-  deleteTodo(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.todosService.delete(id);
+  @UsePipes(new ZodValidationPipe(deleteTodoSchema))
+  deleteTodo(@Param() deleteTodoDto: DeleteTodoDto): Promise<void> {
+    return this.todosService.delete(deleteTodoDto.id);
   }
 }

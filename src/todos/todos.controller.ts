@@ -1,17 +1,17 @@
 import {
   Controller,
+  Delete,
+  Get,
   Param,
   ParseIntPipe,
-  Get,
   Post,
   Put,
-  Delete,
 } from '@nestjs/common';
+import { Body } from '@nestjs/common/decorators/http/route-params.decorator';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { Body } from '@nestjs/common/decorators/http/route-params.decorator';
-import { TodosService } from './todos.service';
 import { Todo } from './todo.entity';
+import { TodosService } from './todos.service';
 
 @Controller('todos')
 export class TodosController {

@@ -7,4 +7,12 @@ export const loginSchema = z
   })
   .strict();
 
+export const signupSchema = z
+  .object({
+    username: z.string(),
+    password: z.string(),
+  })
+  .strict();
+
 export type LoginDto = z.infer<typeof loginSchema>;
+export type SignupDto = z.infer<typeof signupSchema>;

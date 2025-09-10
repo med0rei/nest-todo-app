@@ -45,4 +45,22 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async signup(
+    username: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const existingUser = await this.usersService.findOne(username);
+    if (existingUser) {
+      throw new UnauthorizedException('Username already exists');
+    }
+
+    const newUser = await this.usersService.create({
+      username,
+      password,
+    });
+
+    const userDto: UserDto = { userId: newUser.id, username: newUser.username };
+    return this.login(userDto);
+  }
 }

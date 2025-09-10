@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -12,7 +13,8 @@ import { UserDto } from '../users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { LocalAuthGuard } from './local-auth.guard';
-import { loginSchema } from './schemas/auth.schema';
+import type { SignupDto } from './schemas/auth.schema';
+import { loginSchema, signupSchema } from './schemas/auth.schema';
 
 type RequestWithUser = RequestWith<{ user: UserDto }>;
 
@@ -27,6 +29,14 @@ export class AuthController {
     @Request() req: RequestWithUser,
   ): Promise<{ access_token: string }> {
     return this.authService.login(req.user);
+  }
+
+  @Post('signup')
+  @UsePipes(new ZodValidationPipe(signupSchema))
+  async signup(
+    @Body() signupDto: SignupDto,
+  ): Promise<{ access_token: string }> {
+    return this.authService.signup(signupDto.username, signupDto.password);
   }
 
   @Get('profile')

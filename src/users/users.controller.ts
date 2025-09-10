@@ -13,7 +13,7 @@ import {
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
 import type { RequestWith } from '../types/request-with.d';
-import type { UpdateUserDto } from './schemas/user.schema';
+import type { DeleteUserDto, UpdateUserDto } from './schemas/user.schema';
 import { updateUserSchema, deleteUserSchema } from './schemas/user.schema';
 import { UserDto } from '../users/dto/user.dto';
 import { User } from './user.entity';
@@ -39,11 +39,10 @@ export class UsersController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ZodValidationPipe(updateUserSchema))
   async update(
     @Request() req: RequestWithUser,
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body(new ZodValidationPipe(updateUserSchema)) updateUserDto: UpdateUserDto,
   ): Promise<UserDto> {
     const result = this.usersService.update(req.user.userId, updateUserDto);
     return {
@@ -57,7 +56,7 @@ export class UsersController {
   @UsePipes(new ZodValidationPipe(deleteUserSchema))
   async delete(
     @Request() req: RequestWithUser,
-    @Param('id', ParseIntPipe) id: number,
+    @Param() deleteUserDto: DeleteUserDto,
   ): Promise<void> {
     return this.usersService.delete(req.user.userId);
   }

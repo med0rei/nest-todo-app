@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
 import { UserDto } from '../users/dto/user.dto';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -15,9 +16,11 @@ export class AuthService {
     username: string,
     password: string,
   ): Promise<UserDto | null> {
-    const user = await this.usersService.findOne(username);
+    const user: User | null = await this.usersService.findOne(username);
 
+    console.log('User fetched:', user);
     if (!user) {
+      console.log('User not found');
       return null;
     }
 
@@ -27,6 +30,7 @@ export class AuthService {
         return { userId: user.id, username: user.username };
       } else {
         // password did not match
+        console.log('Invalid password');
         return null;
       }
     } catch (err) {

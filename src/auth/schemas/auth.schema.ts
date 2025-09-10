@@ -5,6 +5,6 @@ export const loginSchema = z
     username: z.string(),
     password: z.string(),
   })
-  .required();
+  .strict();
 
 export type LoginDto = z.infer<typeof loginSchema>;

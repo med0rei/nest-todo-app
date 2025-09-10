@@ -10,6 +10,9 @@
     "formatter": {
       "quoteStyle": "single",
       "jsxQuoteStyle": "single"
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
     }
   },
   "linter": {
